@@ -1,5 +1,6 @@
 package dev.biddan.testingtransactional.User;
 
+import dev.biddan.testingtransactional.team.TeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,24 +10,38 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
 
     @Transactional
-    public Long registerUser(User newUser) {
-        var savedUser = userRepository.save(newUser);
-        return savedUser.getId();
+    public Long save(User newUser) {
+        return userRepository.save(newUser)
+                .getId();
     }
 
     @Transactional(readOnly = true)
-    public User findUser(long userId) {
-        var foundUser = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾지 못헀습니다."));
+    public User get(long userId) {
+        return userRepository.getUserById(userId);
 
-        return foundUser;
     }
 
     @Transactional
     public void changeName(Long userId, String newName) {
         userRepository.findById(userId)
                 .ifPresent(user -> user.changeName(newName));
+    }
+
+    @Transactional
+    public void assignTeam(Long userId, Long teamIdToAssign) {
+        var user = userRepository.getUserById(userId);
+        var teamToAssign = teamRepository.findTeamWithUsersById(teamIdToAssign)
+                .orElseThrow(() -> new IllegalArgumentException("배정할 팀이 존재하지 않습니다."));
+
+        teamToAssign.addUser(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User getWithTeam(Long userId) {
+        return userRepository.findUserWithTeamById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
     }
 }
