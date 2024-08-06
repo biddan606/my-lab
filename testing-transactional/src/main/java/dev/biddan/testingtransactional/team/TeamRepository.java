@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
 
-    @Query("SELECT DISTINCT t FROM Team t LEFT JOIN FETCH t.users")
+    @Query("SELECT t FROM Team t LEFT JOIN FETCH t.users")
     Optional<Team> findTeamWithUsersById(Long id);
 }
