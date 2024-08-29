@@ -1,0 +1,7 @@
+123
+test@example.com
+456
+invalid.email
+789
+Wrong line
+another@email.com
