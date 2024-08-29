@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FileDataExtractor<T> {
+public abstract class FileDataExtractor<T> implements DataExtractor<T> {
 
     protected String fileName;
 
@@ -15,6 +15,7 @@ public abstract class FileDataExtractor<T> {
         this.fileName = fileName;
     }
 
+    @Override
     public final List<T> extractData() {
         List<String> rawData = readFile();
         return processData(rawData);
